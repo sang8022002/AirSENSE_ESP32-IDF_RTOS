@@ -65,6 +65,8 @@
 #include "DeviceManager.h"
 #include "sntp_sync.h"
 
+#include "deep_sleep.h"
+
 /*------------------------------------ DEFINE ------------------------------------ */
 
 __attribute__((unused)) static const char *TAG = "Main";
@@ -106,6 +108,7 @@ SemaphoreHandle_t writeDataToSDcard_semaphore = NULL;
 SemaphoreHandle_t sentDataToMQTT_semaphore = NULL;
 SemaphoreHandle_t writeDataToSDcardNoWifi_semaphore = NULL;
 SemaphoreHandle_t allocateDataToMQTTandSDQueue_semaphore = NULL;
+SemaphoreHandle_t countingToSleep_semaphore = NULL;
 
 QueueHandle_t dataSensorSentToSD_queue;
 QueueHandle_t dataSensorSentToMQTT_queue;
@@ -125,6 +128,8 @@ bool sendToMQTTQueue = false;
 
 const char *formatDataSensorString = "{\n\t\"station_id\":\"%x%x%x%x\",\n\t\"Time\":%lld,\n\t\"Temperature\":%.2f,\n\t\"Humidity\":%.2f,\n\t\"Pressure\":%.2f,\n\t\"PM1\":%d,\n\t\"PM2p5\":%d,\n\t\"PM10\":%d\n}";
 
+uint32_t timeStartGetDataFromSensor;
+uint32_t timeSleep;
 //------------------------------------------------------------------
 
 i2c_dev_t ds3231_device;
@@ -322,6 +327,8 @@ void mqttPublishMessage_task(void *parameters)
 
     for (;;)
     {
+        if(xSemaphoreTake(countingToSleep_semaphore,portMAX_DELAY)){ // pvs
+
         struct dataSensor_st dataSensorReceiveFromQueue;
         if (statusDevice.mqttClient == CONNECTED)
         {
@@ -357,20 +364,24 @@ void mqttPublishMessage_task(void *parameters)
                             ESP_LOGI(__func__, "MQTT client publish message success (^人^).");
                         }
                     }
+                    xSemaphoreGive(countingToSleep_semaphore);
                     vTaskDelay((TickType_t)(1000 / portTICK_RATE_MS));
                 }
             }
             else
             {
+                xSemaphoreGive(countingToSleep_semaphore);
                 vTaskDelay(PERIOD_GET_DATA_FROM_SENSOR);
             }
         }
         else
         {
+            xSemaphoreGive(countingToSleep_semaphore);
             ESP_LOGE(__func__, "MQTT Client disconnected.");
             // Suspend ourselves.
             vTaskSuspend(NULL);
         }
+        }//if(xSemaphoreTake(countingToSleep_semaphore,portMAXDELAY))
     }
 }
 
@@ -459,6 +470,8 @@ void getDataFromSensor_task(void *parameters)
 
     for (;;)
     {
+        timeStartGetDataFromSensor = xTaskGetTickCount();
+        if(xSemaphoreTake(countingToSleep_semaphore,portMAX_DELAY)) {
 #if (CONFIG_USING_RTC)
         if (xSemaphoreTake(getDataSensor_semaphore, portMAX_DELAY))
         {
@@ -528,6 +541,9 @@ void getDataFromSensor_task(void *parameters)
         }
         memset(&dataSensorTemp, 0, sizeof(struct dataSensor_st));
         memset(&moduleErrorTemp, 0, sizeof(struct moduleError_st));
+        //TickType_t excutionTime = xTaskGetTickCount() - task_lastWakeTime; //dung ham nay do thoi gian
+        xSemaphoreGive(countingToSleep_semaphore); //pvs
+        } // countingToSleep_semaphore
         vTaskDelayUntil(&task_lastWakeTime, PERIOD_GET_DATA_FROM_SENSOR);
     }
 };
@@ -599,6 +615,7 @@ void fileEvent_task(void *parameters)
 
     for (;;)
     {
+        if(xSemaphoreTake(countingToSleep_semaphore,portMAX_DELAY)) {
         EventBits_t bits = xEventGroupWaitBits(fileStore_eventGroup,
                                                FILE_RENAME_NEWDAY | MQTT_CLIENT_CONNECTED | MQTT_CLIENT_DISCONNECTED | FILE_RENAME_FROMSYNC,
                                                pdTRUE,
@@ -666,7 +683,9 @@ void fileEvent_task(void *parameters)
                 ESP_LOGI(__func__, "File name updated from SNTP");
             }
             xSemaphoreGive(file_semaphore);
+            xSemaphoreGive(countingToSleep_semaphore);
         }
+        }//if(xSemaphoreTake(countingToSleep_semaphore,portMAXDELAY)) 
     }
 };
 
@@ -682,6 +701,7 @@ void sendDataSensorToMQTTServerAfterReconnectWiFi_task(void *parameters)
 
     for (;;)
     {
+        if(xSemaphoreTake(countingToSleep_semaphore,portMAX_DELAY)){
         while (uxQueueMessagesWaiting((const QueueHandle_t)dateTimeLostWiFi_queue) != 0)
         {
             memset(&timeLostWiFi, 0, sizeof(struct tm));
@@ -751,6 +771,8 @@ void sendDataSensorToMQTTServerAfterReconnectWiFi_task(void *parameters)
             ESP_ERROR_CHECK_WITHOUT_ABORT(sdcard_removeFile(nameFileSaveDataLostWiFi));
         }
         // Suspend ourselves.
+        xSemaphoreGive(countingToSleep_semaphore);
+        }
         vTaskSuspend(NULL);
     }
 }
@@ -767,6 +789,9 @@ void saveDataSensorToSDcard_task(void *parameters)
     writeDataToSDcard_semaphore = xSemaphoreCreateMutex();
     for (;;)
     {
+        if(xSemaphoreTake(countingToSleep_semaphore,portMAX_DELAY)){
+
+
         if (uxQueueMessagesWaiting(dataSensorSentToSD_queue) != 0) // Check if dataSensorSentToSD_queue is empty
         {
             if (xQueueReceive(dataSensorSentToSD_queue, (void *)&dataSensorReceiveFromQueue, WAIT_10_TICK * 50) == pdPASS) // Get data sesor from queue
@@ -799,11 +824,22 @@ void saveDataSensorToSDcard_task(void *parameters)
                 continue;
             }
         }
-
+        xSemaphoreGive(countingToSleep_semaphore); //pvs
+        }//if(xSemaphoreTake(countingToSleep_semaphore,portMAXDELAY))
         vTaskDelay(PERIOD_SAVE_DATA_SENSOR_TO_SDCARD);
     }
 };
 
+void deepSleep_task()
+{
+    if(uxSemaphoreGetCount( countingToSleep_semaphore ) == 5)
+    {
+        timeSleep = xTaskGetTickCount() - timeStartGetDataFromSensor;
+        timeSleep = 5000- timeSleep;
+        deep_sleep_register_rtc_timer_wakeup(timeSleep);
+        deep_sleep();
+    }
+}
 /*------------------------------------ MAIN_APP ------------------------------------*/
 
 void app_main(void)
@@ -886,6 +922,8 @@ void app_main(void)
 
 #endif // CONFIG_USING_PMS7003
 
+    countingToSleep_semaphore = xSemaphoreCreateCounting( 5, 0 );
+
     xTaskCreate(fileEvent_task, "EventFile",
                 (1024 * 8),
                 NULL,
@@ -964,7 +1002,7 @@ void app_main(void)
     // Semaphore that handle the immediate queue (that be used by 3 tasks) 
     allocateDataToMQTTandSDQueue_semaphore = xSemaphoreCreateMutex();
 
-    // Creat task to allocate data to MQTT and SD queue from dataSensorIntermediate queue
+    // Create task to allocate data to MQTT and SD queue from dataSensorIntermediate queue
     xTaskCreate(allocateDataToMQTTandSDQueue_task, "AllocateData", (1024 * 16), NULL, (UBaseType_t)15, &allocateDataToMQTTandSDQueue_handle);
     if (allocateDataToMQTTandSDQueue_handle != NULL)
     {

@@ -1232,7 +1232,7 @@
                     {
                         "children": [],
                         "depends_on": "SECURE_TARGET_HAS_SECURE_ROM_DL_MODE && <choice SECURE_UART_ROM_DL_MODE>",
-                        "help": "If set, during startup the app will burn an eFuse bit to permanently switch the UART ROM\nDownload Mode into a separate Secure Download mode. This option can only work if\nDownload Mode is not already disabled by eFuse.\n\nSecure Download mode limits the use of Download Mode functions to simple flash read,\nwrite and erase operations, plus a command to return a summary of currently enabled\nsecurity features.\n\nSecure Download mode is not compatible with the esptool.py flasher stub feature,\nespefuse.py, read/writing memory or registers, encrypted download, or any other\nfeatures that interact with unsupported Download Mode commands.\n\nSecure Download mode should be enabled in any application where Flash Encryption\nand/or Secure Boot is enabled. Disabling this option does not immediately cancel\nthe benefits of the security features, but it increases the potential \"attack\nsurface\" for an attacker to try and bypass them with a successful physical attack.\n\nIt is also possible to enable secure download mode at runtime by calling\nesp_efuse_enable_rom_secure_download_mode()\n\nNote: Secure Download mode is not available for ESP32 (includes revisions till ECO3).",
+                        "help": "If set, during startup the app will burn an eFuse bit to permanently switch the UART ROM\nDownload Mode into a separate Secure Download mode. This option can only work if\nDownload Mode is not already disabled by eFuse.\n\nSecure Download mode limits the use of Download Mode functions to update SPI config,\nchanging baud rate, basic flash write and a command to return a summary of currently\nenabled security features (`get_security_info`).\n\nSecure Download mode is not compatible with the esptool.py flasher stub feature,\nespefuse.py, read/writing memory or registers, encrypted download, or any other\nfeatures that interact with unsupported Download Mode commands.\n\nSecure Download mode should be enabled in any application where Flash Encryption\nand/or Secure Boot is enabled. Disabling this option does not immediately cancel\nthe benefits of the security features, but it increases the potential \"attack\nsurface\" for an attacker to try and bypass them with a successful physical attack.\n\nIt is also possible to enable secure download mode at runtime by calling\nesp_efuse_enable_rom_secure_download_mode()\n\nNote: Secure Download mode is not available for ESP32 (includes revisions till ECO3).",
                         "id": "SECURE_ENABLE_SECURE_ROM_DL_MODE",
                         "name": "SECURE_ENABLE_SECURE_ROM_DL_MODE",
                         "range": null,
@@ -2432,6 +2432,122 @@
             {
                 "children": [],
                 "depends_on": null,
+                "help": "GPIO number for PWM PIN.",
+                "id": "MHZ14A_PWM_PIN",
+                "name": "MHZ14A_PWM_PIN",
+                "range": null,
+                "title": "PMW PIN GPIO Number",
+                "type": "int"
+            },
+            {
+                "children": [],
+                "depends_on": null,
+                "help": "Max size queue for store capture PWM.",
+                "id": "QUEUE_SIZE",
+                "name": "QUEUE_SIZE",
+                "range": null,
+                "title": "Max size queue",
+                "type": "int"
+            },
+            {
+                "children": [],
+                "depends_on": null,
+                "help": "GPIO number for HD PIN, using for zero-point calibration(auto calibartion).",
+                "id": "HD_PIN",
+                "name": "HD_PIN",
+                "range": null,
+                "title": "HD PIIN GPIO number",
+                "type": "int"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": "<choice MHZ14A_PROTOCOL_COMMUNICATION>",
+                        "help": null,
+                        "id": "MHZ14A_PWM",
+                        "name": "MHZ14A_PWM",
+                        "range": null,
+                        "title": "PWM",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "<choice MHZ14A_PROTOCOL_COMMUNICATION>",
+                        "help": null,
+                        "id": "MHZ14A_UART",
+                        "name": "MHZ14A_UART",
+                        "range": null,
+                        "title": "UART",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "help": "MHZ14a protocol communication to get data.",
+                "id": "mhz14a-configuration-mhz14a-protocol",
+                "name": "MHZ14A_PROTOCOL_COMMUNICATION",
+                "title": "MHZ14a protocol",
+                "type": "choice"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": "MHZ14A_UART",
+                        "help": "GPIO number for TX.",
+                        "id": "MHZ14A_PIN_TX",
+                        "name": "MHZ14A_PIN_TX",
+                        "range": null,
+                        "title": "TX GPIO Number",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "MHZ14A_UART",
+                        "help": "GPIO number for RX.",
+                        "id": "MHZ14A_PIN_RX",
+                        "name": "MHZ14A_PIN_RX",
+                        "range": null,
+                        "title": "RX GPIO Number",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "MHZ14A_UART",
+                        "help": "UART baudrate.",
+                        "id": "MHZ14A_UART_BAUD_RATE",
+                        "name": "MHZ14A_UART_BAUD_RATE",
+                        "range": null,
+                        "title": "UART baudrate",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "MHZ14A_UART",
+                        "help": "UART port for PMS sensor.",
+                        "id": "MHZ14A_UART_PORT",
+                        "name": "MHZ14A_UART_PORT",
+                        "range": null,
+                        "title": "Uart Port",
+                        "type": "int"
+                    }
+                ],
+                "depends_on": "MHZ14A_UART",
+                "id": "mhz14a-configuration-mhz14a-uart-configuration",
+                "title": "MHZ14a UART configuration",
+                "type": "menu"
+            }
+        ],
+        "depends_on": null,
+        "id": "mhz14a-configuration",
+        "title": "MHZ14a configuration",
+        "type": "menu"
+    },
+    {
+        "children": [
+            {
+                "children": [],
+                "depends_on": null,
                 "help": "GPIO number for TX.",
                 "id": "PMS_PIN_TX",
                 "name": "PMS_PIN_TX",
@@ -2521,6 +2637,650 @@
         "depends_on": null,
         "id": "rtc-configuration",
         "title": "RTC configuration",
+        "type": "menu"
+    },
+    {
+        "children": [
+            {
+                "children": [],
+                "depends_on": null,
+                "help": "This option enables wake up from deep sleep using touch pads.\nESP32 - TOUCH8 and TOUCH9, which correspond to GPIO33 and GPIO32.\nESP32S2/S3 - TOUCH9, which corresponds to GPIO9.\n\nNote: On ESP32, touch wakeup source can not be used together with ext0 wakeup source.",
+                "id": "EXAMPLE_TOUCH_WAKEUP",
+                "name": "EXAMPLE_TOUCH_WAKEUP",
+                "range": null,
+                "title": "Enable touch wake up",
+                "type": "bool"
+            },
+            {
+                "children": [],
+                "depends_on": null,
+                "help": "This option enables wake up from deep sleep from GPIO25(ESP32)/GPIO3(ESP32S2,S3). The pin should be\nconnected to LOW to avoid being in a floating state. When triggering a wake up, connect the pin to HIGH.\nNote that floating pins may trigger a wake up.\n\nNote: On ESP32, ext0 wakeup source can not be used together with touch wakeup source.",
+                "id": "EXAMPLE_EXT0_WAKEUP",
+                "name": "EXAMPLE_EXT0_WAKEUP",
+                "range": null,
+                "title": "Enable wakeup from GPIO (ext0)",
+                "type": "bool"
+            },
+            {
+                "children": [],
+                "depends_on": null,
+                "help": "This option enables wake up from deep sleep from GPIO2 and GPIO4. They should be connected to LOW to avoid\nfloating pins. When triggering a wake up, connect one or both of the pins to HIGH. Note that floating\npins may trigger a wake up.",
+                "id": "EXAMPLE_EXT1_WAKEUP",
+                "name": "EXAMPLE_EXT1_WAKEUP",
+                "range": null,
+                "title": "Enable wakeup from GPIO (ext1)",
+                "type": "bool"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "EXAMPLE_EXT1_WAKEUP_PIN_1",
+                        "name": "EXAMPLE_EXT1_WAKEUP_PIN_1",
+                        "range": null,
+                        "title": "Enable wakeup from PIN_1",
+                        "type": "int"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_1_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_0",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_0",
+                                "range": null,
+                                "title": "GPIO 0",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_1_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_2",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_2",
+                                "range": null,
+                                "title": "GPIO 2",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_1_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_4",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_4",
+                                "range": null,
+                                "title": "GPIO 4",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_1_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_12",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_12",
+                                "range": null,
+                                "title": "GPIO 12",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_1_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_13",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_13",
+                                "range": null,
+                                "title": "GPIO 13",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_1_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_14",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_14",
+                                "range": null,
+                                "title": "GPIO 14",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_1_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_15",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_15",
+                                "range": null,
+                                "title": "GPIO 15",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_1_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_25",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_25",
+                                "range": null,
+                                "title": "GPIO 25",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_1_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_26",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_26",
+                                "range": null,
+                                "title": "GPIO 26",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_1_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_27",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_27",
+                                "range": null,
+                                "title": "GPIO 27",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_1_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_32",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_32",
+                                "range": null,
+                                "title": "GPIO 32",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_1_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_33",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_33",
+                                "range": null,
+                                "title": "GPIO 33",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_1_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_34",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_34",
+                                "range": null,
+                                "title": "GPIO 34",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_1_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_35",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_35",
+                                "range": null,
+                                "title": "GPIO 35",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_1_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_36",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_36",
+                                "range": null,
+                                "title": "GPIO 36",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_1_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_37",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_37",
+                                "range": null,
+                                "title": "GPIO 37",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_1_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_38",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_38",
+                                "range": null,
+                                "title": "GPIO 38",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_1_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_39",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL_39",
+                                "range": null,
+                                "title": "GPIO 39",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": "IDF_TARGET_ESP32",
+                        "help": null,
+                        "id": "example-configuration-ext1-wakeup-configuration-enable-wakeup-from-pin_1",
+                        "name": "EXAMPLE_EXT1_WAKEUP_PIN_1_SEL",
+                        "title": "Enable wakeup from PIN_1",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "IDF_TARGET_ESP32",
+                        "help": null,
+                        "id": "EXAMPLE_EXT1_WAKEUP_PIN_1",
+                        "name": "EXAMPLE_EXT1_WAKEUP_PIN_1",
+                        "range": null,
+                        "title": null,
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "EXAMPLE_EXT1_WAKEUP_PIN_2",
+                        "name": "EXAMPLE_EXT1_WAKEUP_PIN_2",
+                        "range": null,
+                        "title": "Enable wakeup from PIN_2",
+                        "type": "int"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_2_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_0",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_0",
+                                "range": null,
+                                "title": "GPIO 0",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_2_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_2",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_2",
+                                "range": null,
+                                "title": "GPIO 2",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_2_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_4",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_4",
+                                "range": null,
+                                "title": "GPIO 4",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_2_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_12",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_12",
+                                "range": null,
+                                "title": "GPIO 12",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_2_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_13",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_13",
+                                "range": null,
+                                "title": "GPIO 13",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_2_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_14",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_14",
+                                "range": null,
+                                "title": "GPIO 14",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_2_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_15",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_15",
+                                "range": null,
+                                "title": "GPIO 15",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_2_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_25",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_25",
+                                "range": null,
+                                "title": "GPIO 25",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_2_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_26",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_26",
+                                "range": null,
+                                "title": "GPIO 26",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_2_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_27",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_27",
+                                "range": null,
+                                "title": "GPIO 27",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_2_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_32",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_32",
+                                "range": null,
+                                "title": "GPIO 32",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_2_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_33",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_33",
+                                "range": null,
+                                "title": "GPIO 33",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_2_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_34",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_34",
+                                "range": null,
+                                "title": "GPIO 34",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_2_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_35",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_35",
+                                "range": null,
+                                "title": "GPIO 35",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_2_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_36",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_36",
+                                "range": null,
+                                "title": "GPIO 36",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_2_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_37",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_37",
+                                "range": null,
+                                "title": "GPIO 37",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_2_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_38",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_38",
+                                "range": null,
+                                "title": "GPIO 38",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_2_SEL>",
+                                "help": null,
+                                "id": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_39",
+                                "name": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL_39",
+                                "range": null,
+                                "title": "GPIO 39",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "example-configuration-ext1-wakeup-configuration-enable-wakeup-from-pin_2",
+                        "name": "EXAMPLE_EXT1_WAKEUP_PIN_2_SEL",
+                        "title": "Enable wakeup from PIN_2",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "EXAMPLE_EXT1_WAKEUP_PIN_2",
+                        "name": "EXAMPLE_EXT1_WAKEUP_PIN_2",
+                        "range": null,
+                        "title": null,
+                        "type": "int"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_MODE_SEL>",
+                                "help": null,
+                                "id": "ESP_EXT1_WAKEUP_ANY_LOW",
+                                "name": "ESP_EXT1_WAKEUP_ANY_LOW",
+                                "range": null,
+                                "title": "GPIO any low level",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "IDF_TARGET_ESP32 && <choice EXAMPLE_EXT1_WAKEUP_MODE_SEL>",
+                                "help": null,
+                                "id": "ESP_EXT1_WAKEUP_ALL_LOW",
+                                "name": "ESP_EXT1_WAKEUP_ALL_LOW",
+                                "range": null,
+                                "title": "GPIO all low level",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_MODE_SEL>",
+                                "help": null,
+                                "id": "ESP_EXT1_WAKEUP_ANY_HIGH",
+                                "name": "ESP_EXT1_WAKEUP_ANY_HIGH",
+                                "range": null,
+                                "title": "GPIO any high level",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "example-configuration-ext1-wakeup-configuration-select-wakeup-mode-from-ext1",
+                        "name": "EXAMPLE_EXT1_WAKEUP_MODE_SEL",
+                        "title": "Select wakeup mode from EXT1",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "EXAMPLE_EXT1_WAKEUP_MODE",
+                        "name": "EXAMPLE_EXT1_WAKEUP_MODE",
+                        "range": null,
+                        "title": null,
+                        "type": "int"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_1_MODE_SEL>",
+                                "help": null,
+                                "id": "ESP_EXT1_WAKEUP_PIN_1_LOW",
+                                "name": "ESP_EXT1_WAKEUP_PIN_1_LOW",
+                                "range": null,
+                                "title": "GPIO low level",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_1_MODE_SEL>",
+                                "help": null,
+                                "id": "ESP_EXT1_WAKEUP_PIN_1_HIGH",
+                                "name": "ESP_EXT1_WAKEUP_PIN_1_HIGH",
+                                "range": null,
+                                "title": "GPIO high level",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": "SOC_PM_SUPPORT_EXT1_WAKEUP_MODE_PER_PIN",
+                        "help": null,
+                        "id": "example-configuration-ext1-wakeup-configuration-select-pin_1-wakeup-mode-from-ext1",
+                        "name": "EXAMPLE_EXT1_WAKEUP_PIN_1_MODE_SEL",
+                        "title": "Select pin_1 wakeup mode from EXT1",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "SOC_PM_SUPPORT_EXT1_WAKEUP_MODE_PER_PIN",
+                        "help": null,
+                        "id": "EXAMPLE_EXT1_WAKEUP_MODE_PIN_1",
+                        "name": "EXAMPLE_EXT1_WAKEUP_MODE_PIN_1",
+                        "range": null,
+                        "title": null,
+                        "type": "int"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_2_MODE_SEL>",
+                                "help": null,
+                                "id": "ESP_EXT1_WAKEUP_PIN_2_LOW",
+                                "name": "ESP_EXT1_WAKEUP_PIN_2_LOW",
+                                "range": null,
+                                "title": "GPIO low level",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice EXAMPLE_EXT1_WAKEUP_PIN_2_MODE_SEL>",
+                                "help": null,
+                                "id": "ESP_EXT1_WAKEUP_PIN_2_HIGH",
+                                "name": "ESP_EXT1_WAKEUP_PIN_2_HIGH",
+                                "range": null,
+                                "title": "GPIO high level",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": "SOC_PM_SUPPORT_EXT1_WAKEUP_MODE_PER_PIN",
+                        "help": null,
+                        "id": "example-configuration-ext1-wakeup-configuration-select-pin_2-wakeup-mode-from-ext1",
+                        "name": "EXAMPLE_EXT1_WAKEUP_PIN_2_MODE_SEL",
+                        "title": "Select pin_2 wakeup mode from EXT1",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "EXAMPLE_EXT1_WAKEUP_MODE_PIN_2",
+                        "name": "EXAMPLE_EXT1_WAKEUP_MODE_PIN_2",
+                        "range": null,
+                        "title": null,
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "EXAMPLE_EXT1_WAKEUP",
+                        "help": "When using EXT1 wakeup source without external pull-up/downs, you may want to make use of\nthe internal ones.\n\nif we turn off the RTC_PERIPH domain or if certain chips lack the RTC_PERIPH domain,\nwe will use the HOLD feature to maintain the pull-up and pull-down on the pins during sleep.\nbut if we turn on the RTC_PERIPH domain, we don not need to use HOLD feature and this will\nincrease some power comsumption.\n\nEXT0 wakeup source resides in the same power domain as RTCIO (RTC Periph), so internal\npull-up/downs are always available. There's no need to explicitly force it on for EXT0.",
+                        "id": "EXAMPLE_EXT1_USE_INTERNAL_PULLUPS",
+                        "name": "EXAMPLE_EXT1_USE_INTERNAL_PULLUPS",
+                        "range": null,
+                        "title": "Use internal pull-up/downs for EXT1 wakeup source",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "example-configuration-ext1-wakeup-configuration",
+                "title": "EXT1 wakeup configuration",
+                "type": "menu"
+            },
+            {
+                "children": [],
+                "depends_on": null,
+                "help": "This option enables wake up from GPIO. Be aware that if you use low level to trigger wakeup, we strongly\nrecommand you to connect external pull-up resistance.",
+                "id": "EXAMPLE_GPIO_WAKEUP",
+                "name": "EXAMPLE_GPIO_WAKEUP",
+                "range": null,
+                "title": "Enable wakeup from GPIO",
+                "type": "bool"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "EXAMPLE_GPIO_WAKEUP_PIN",
+                        "name": "EXAMPLE_GPIO_WAKEUP_PIN",
+                        "range": null,
+                        "title": "Enable wakeup from GPIO",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "This option set the gpio wake-up trigger signal, In deep sleep, only high or low level wake-up is\nsupported. If this option is enabled, it is a high level wake up, otherwise it is a low level wake up.",
+                        "id": "EXAMPLE_GPIO_WAKEUP_HIGH_LEVEL",
+                        "name": "EXAMPLE_GPIO_WAKEUP_HIGH_LEVEL",
+                        "range": null,
+                        "title": "Enable GPIO high-level wakeup",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "example-configuration-gpio-wakeup-configuration",
+                "title": "GPIO wakeup configuration",
+                "type": "menu"
+            }
+        ],
+        "depends_on": null,
+        "id": "example-configuration",
+        "title": "Example Configuration",
         "type": "menu"
     },
     {
@@ -4185,6 +4945,16 @@
                                                 "type": "int"
                                             },
                                             {
+                                                "children": [],
+                                                "depends_on": "BT_GATTS_ENABLE && BT_BLUEDROID_ENABLED && BT_BLUEDROID_ENABLED",
+                                                "help": "Maximum GATT Service Attributes Count",
+                                                "id": "BT_GATT_MAX_SR_ATTRIBUTES",
+                                                "name": "BT_GATT_MAX_SR_ATTRIBUTES",
+                                                "range": null,
+                                                "title": "Max GATT Service Attributes",
+                                                "type": "int"
+                                            },
+                                            {
                                                 "children": [
                                                     {
                                                         "children": [],
@@ -4235,6 +5005,16 @@
                                     },
                                     {
                                         "children": [
+                                            {
+                                                "children": [],
+                                                "depends_on": "BT_GATTC_ENABLE && BT_BLUEDROID_ENABLED",
+                                                "help": "Maximum GATTC cache characteristic count",
+                                                "id": "BT_GATTC_MAX_CACHE_CHAR",
+                                                "name": "BT_GATTC_MAX_CACHE_CHAR",
+                                                "range": null,
+                                                "title": "Max gattc cache characteristic for discover",
+                                                "type": "int"
+                                            },
                                             {
                                                 "children": [],
                                                 "depends_on": "BT_GATTC_ENABLE && BT_BLUEDROID_ENABLED",
@@ -6205,11 +6985,11 @@
                             {
                                 "children": [],
                                 "depends_on": "BT_BLUEDROID_ENABLED && BT_BLUEDROID_ENABLED",
-                                "help": "Maximum BT/BLE connection count",
+                                "help": "Maximum BT/BLE connection count. The ESP32-C3/S3 chip supports a maximum of 10 instances,\nincluding ADV, SCAN and connections. The ESP32-C3/S3 chip can connect up to 9 devices if\nADV or SCAN uses only one. If ADV and SCAN are both used, The ESP32-C3/S3 chip is connected\nto a maximum of 8 devices. Because Bluetooth cannot reclaim used instances once ADV or SCAN\nis used.",
                                 "id": "BT_ACL_CONNECTIONS",
                                 "name": "BT_ACL_CONNECTIONS",
                                 "range": null,
-                                "title": "BT/BLE MAX ACL CONNECTIONS(1~7)",
+                                "title": "BT/BLE MAX ACL CONNECTIONS(1~9)",
                                 "type": "int"
                             },
                             {
@@ -6264,7 +7044,7 @@
                             },
                             {
                                 "children": [],
-                                "depends_on": "BT_BLUEDROID_ENABLED && (BTDM_CTRL_MODE_BTDM || BTDM_CTRL_MODE_BLE_ONLY) && BT_BLUEDROID_ENABLED",
+                                "depends_on": "BT_BLUEDROID_ENABLED && BT_BLE_ENABLED && BT_BLUEDROID_ENABLED",
                                 "help": "Originally, when doing BLE active scan, Bluedroid will not report adv to application layer\nuntil receive scan response. This option is used to disable the behavior. When enable this option,\nBluedroid will report adv data or scan response to application layer immediately.\n\n# Memory reserved at start of DRAM for Bluetooth stack",
                                 "id": "BT_BLE_ACT_SCAN_REP_ADV_SCAN",
                                 "name": "BT_BLE_ACT_SCAN_REP_ADV_SCAN",
@@ -7597,6 +8377,16 @@
                         "range": null,
                         "title": "Divider for IV Update state refresh timer",
                         "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "BLE_MESH",
+                        "help": "According to Section 3.10.5 of Mesh Specification v1.0.1.\nIf a node in Normal Operation receives a Secure Network beacon with an IV index\nequal to the last known IV index+1 and the IV Update Flag set to 0, the node may\nupdate its IV without going to the IV Update in Progress state, or it may initiate\nan IV Index Recovery procedure (Section 3.10.6), or it may ignore the Secure\nNetwork beacon. The node makes the choice depending on the time since last IV\nupdate and the likelihood that the node has missed the Secure Network beacons\nwith the IV update Flag.\nWhen the above situation is encountered, this option can be used to decide whether\nto perform the IV index recovery procedure.",
+                        "id": "BLE_MESH_IVU_RECOVERY_IVI",
+                        "name": "BLE_MESH_IVU_RECOVERY_IVI",
+                        "range": null,
+                        "title": "Recovery the IV index when the latest whole IV update procedure is missed",
+                        "type": "bool"
                     },
                     {
                         "children": [],
@@ -12823,6 +13613,19 @@
                         "range": null,
                         "title": "Wifi sleep optimize when beacon lost",
                         "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Maximum number of encrypted peers supported by espnow.\nThe number of hardware keys for encryption is fixed. And the espnow and SoftAP share the same\nhardware keys. So this configuration will affect the maximum connection number of SoftAP.\nMaximum espnow encrypted peers number + maximum number of connections of SoftAP = Max hardware keys number.\n\nWhen using ESP mesh, this value should be set to a maximum of 6.",
+                        "id": "ESP_WIFI_ESPNOW_MAX_ENCRYPT_NUM",
+                        "name": "ESP_WIFI_ESPNOW_MAX_ENCRYPT_NUM",
+                        "range": [
+                            0,
+                            17
+                        ],
+                        "title": "Maximum espnow encrypt peers number",
+                        "type": "int"
                     }
                 ],
                 "depends_on": null,
@@ -13758,63 +14561,11 @@
                     {
                         "children": [],
                         "depends_on": null,
-                        "help": "Modbus slave Timer group number that is used for timeout measurement.",
-                        "id": "FMB_TIMER_GROUP",
-                        "name": "FMB_TIMER_GROUP",
-                        "range": [
-                            0,
-                            1
-                        ],
-                        "title": "Slave Timer group number",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Modbus slave Timer Index in the group that is used for timeout measurement.",
-                        "id": "FMB_TIMER_INDEX",
-                        "name": "FMB_TIMER_INDEX",
-                        "range": [
-                            0,
-                            1
-                        ],
-                        "title": "Slave Timer index in the group",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Modbus master Timer group number that is used for timeout measurement.",
-                        "id": "FMB_MASTER_TIMER_GROUP",
-                        "name": "FMB_MASTER_TIMER_GROUP",
-                        "range": [
-                            0,
-                            1
-                        ],
-                        "title": "Master Timer group number",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Modbus master Timer Index in the group that is used for timeout measurement.\nNote: Modbus master and slave should have different timer index to be able to work simultaneously.",
-                        "id": "FMB_MASTER_TIMER_INDEX",
-                        "name": "FMB_MASTER_TIMER_INDEX",
-                        "range": [
-                            0,
-                            1
-                        ],
-                        "title": "Master Timer index",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "This option places Modbus timer IRQ handler into IRAM.\nThis allows to avoid delays related to processing of non-IRAM-safe interrupts\nduring a flash write operation (NVS updating a value, or some other\nflash API which has to perform an read/write operation and disable CPU cache).\nThis option has dependency with the UART_ISR_IN_IRAM option which places UART interrupt\nhandler into IRAM to prevent delays related to processing of UART events.",
-                        "id": "FMB_TIMER_ISR_IN_IRAM",
-                        "name": "FMB_TIMER_ISR_IN_IRAM",
+                        "help": "If this option is set the Modbus stack uses ISR dispatch method\nto send timeout events from the callback function called from ISR.\nThis option has dependency with the UART_ISR_IN_IRAM option which places UART interrupt\nhandler into IRAM to prevent delays related to processing of UART events.",
+                        "id": "FMB_TIMER_USE_ISR_DISPATCH_METHOD",
+                        "name": "FMB_TIMER_USE_ISR_DISPATCH_METHOD",
                         "range": null,
-                        "title": "Place timer interrupt handler into IRAM",
+                        "title": "Modbus timer uses ISR dispatch method",
                         "type": "bool"
                     }
                 ],
@@ -15448,11 +16199,21 @@
                             {
                                 "children": [],
                                 "depends_on": null,
-                                "help": "Set maximum segment lifetime in in milliseconds.",
+                                "help": "Set maximum segment lifetime in milliseconds.",
                                 "id": "LWIP_TCP_MSL",
                                 "name": "LWIP_TCP_MSL",
                                 "range": null,
                                 "title": "Maximum segment lifetime (MSL)",
+                                "type": "int"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": null,
+                                "help": "Set maximum segment lifetime in milliseconds.",
+                                "id": "LWIP_TCP_FIN_WAIT_TIMEOUT",
+                                "name": "LWIP_TCP_FIN_WAIT_TIMEOUT",
+                                "range": null,
+                                "title": "Maximum FIN segment lifetime",
                                 "type": "int"
                             },
                             {
@@ -18915,6 +19676,16 @@
                         "name": "SPI_FLASH_ENABLE_ENCRYPTED_READ_WRITE",
                         "range": null,
                         "title": "Enable encrypted partition read/write operations",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "This option is invisible, and will be selected automatically\nwhen ``ESPTOOLPY_FLASHFREQ_120M`` is selected.",
+                        "id": "SPI_FLASH_HPM_ENABLE",
+                        "name": "SPI_FLASH_HPM_ENABLE",
+                        "range": null,
+                        "title": null,
                         "type": "bool"
                     }
                 ],

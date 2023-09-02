@@ -1,4 +1,4 @@
-# Install script for directory: C:/Espressif/frameworks/esp-idf-v4.4.3/components/mbedtls
+# Install script for directory: C:/Espressif/frameworks/esp-idf-v4.4.4/components/mbedtls
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,7 +39,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("C:/Users/admin/esp/AirSENSE_ESP32-IDF_RTOS_KHANH/build/esp-idf/mbedtls/mbedtls/cmake_install.cmake")
+  include("C:/Espressif/frameworks/github/AirSENSE_ESP32-IDF_RTOS/build/esp-idf/mbedtls/mbedtls/cmake_install.cmake")
 
 endif()
 
